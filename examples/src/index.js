@@ -1,6 +1,6 @@
 import React, { Component ,PropTypes} from 'react';
 import ReactDom from 'react/lib/ReactDOM';
-import Joyride from '../../src/Joyride.js';
+import Joyride from '../../src/joyride.js';
 class Demo extends Component{
 
     constructor(props,context){
