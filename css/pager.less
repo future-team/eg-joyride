@@ -1,0 +1,20 @@
+.eg-pager-container{
+  text-align: center;
+  i{
+    display: inline-block;
+    box-sizing: border-box;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    border:1px solid #aaa;
+    margin-right: 5px;
+    cursor: pointer;
+    &:last-child{
+      margin-right: 0;
+    }
+    &.active{
+      background: #333;
+      border-color: #333;
+    }
+  }
+}

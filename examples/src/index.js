@@ -6,14 +6,16 @@ class Demo extends Component{
     constructor(props,context){
         super(props,context);
     }
-
+    openSecond(){
+        this.refs.joyride.open(1)
+    }
     render(){
         return (
             <Joyride
+                ref='joyride'
                 steps={[
                     {
                     title: 'Title only Hahahahahhah !',
-                    textAlign: 'center',
                     selector:'#step1',
                     position:'bottom'
                     },
@@ -33,8 +35,9 @@ class Demo extends Component{
                     position:'right'
                     }
                 ]}>
-                <div>
+                <div style={{paddingBottom:'500px'}}>
                     <h1>hehehehehe</h1>
+                    <button onClick={::this.openSecond}>打开第二步</button>
                     <div
                         id='step1'
                         style={{background:'red',width:'100px',height:'100px'}}>

@@ -11,7 +11,9 @@
     "email": "amberonno@gmail.com"
   },
   "keywords": [
-    "trade-static"
+    "walkthrough",
+    "joyride",
+    "eg-joyride"
   ],
   "dependencies": {
     "extend": "^3.0.0",

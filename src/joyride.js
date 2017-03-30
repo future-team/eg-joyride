@@ -4,7 +4,8 @@
 
 import React,{PropTypes,Component} from 'react';
 import classnames from 'classnames';
-require ('../css/Joyride.less');
+import Pager from './pager.js';
+require ('../css/index.less');
 
 export default class Overlay extends Component{
     static propTypes = {
@@ -12,14 +13,6 @@ export default class Overlay extends Component{
         steps:PropTypes.array,
         holePadding:PropTypes.number,
         tooltipMargin:PropTypes.number,
-        //何时显示遮罩块，可选always、hover（always会一直显示，hover只有在鼠标移动到的时候会显示）默认always
-        show:PropTypes.string,
-        //overlay的内容
-        overlayContent:React.PropTypes.oneOfType([
-            React.PropTypes.string,
-            React.PropTypes.element
-        ])
-
     };
     constructor(props,context){
         super(props,context);
@@ -27,13 +20,19 @@ export default class Overlay extends Component{
             index:0
         }
     }
-
+    resizeListener(){
+        if(this.state.index!=-1){
+            this.renderOverlay()
+        }
+    }
     componentDidMount(){
         this.renderOverlay();
+        window.addEventListener('resize',::this.resizeListener)
+    }
+    componentWillUnmount(){
+        window.removeEventListener('resize',::this.resizeListener)
     }
     static defaultProps = {
-        position:'bottom-right',
-        show:'always',
         holePadding:5,
         tooltipMargin:10
     };
@@ -42,22 +41,12 @@ export default class Overlay extends Component{
             {index}=this.state;
         index+=1;
         if(index>=steps.length){
-            index=-1;
+            this.close();
+        }else{
+            this.setState({
+                index,index
+            })
         }
-        this.setState({
-            index,index
-        })
-    }
-    preStep(){
-        let {steps}=this.props,
-            {index}=this.state;
-        index-=1;
-        if(index<0){
-            index=steps.length-1;
-        }
-        this.setState({
-            index,index
-        })
     }
     componentDidUpdate(){
         this.renderOverlay();
@@ -80,7 +69,7 @@ export default class Overlay extends Component{
             tooltipStyle=tooltip.style,
             currentStep=steps[index],
             stepDom=document.querySelectorAll(currentStep.selector)[0],
-            stepPosition=currentStep.position;
+            stepPosition=currentStep.position||'bottom';
         //hole
         let holeDimension=this.getDimension(stepDom),
             holeLeft=holeDimension.left-holePadding,
@@ -96,20 +85,35 @@ export default class Overlay extends Component{
         //tooltip 不考虑冲突，只考虑用户设置的position
         let tooltipDimension=this.getDimension(tooltip),
             tooltipTop=0,
-            tooltipLeft=0;
+            tooltipLeft=0,
+            tooltipWidth=tooltipDimension.width,
+            tooltipHeight=tooltipDimension.height;
+
+
+        //可视窗口的上下边界
+        let topLine=window.scrollY,
+            bottomline=topLine+window.innerHeight,
+            overlayTopLine=holeTop,
+            overlayBottomLine=holeTop+(tooltipHeight>holeHeight?tooltipHeight:holeHeight);
+
+
         switch (stepPosition){
             case 'top':
-                tooltipTop=holeTop-tooltipMargin-tooltipDimension.height;
+                tooltipTop=holeTop-tooltipMargin-tooltipHeight;
                 tooltipLeft=holeLeft;
+                overlayTopLine=tooltipTop;
+                overlayBottomLine=holeTop+holeHeight;
                 //TODO
                 break;
             case 'bottom':
                 tooltipTop=holeTop+holeHeight+tooltipMargin;
                 tooltipLeft=holeLeft;
+                overlayTopLine=holeTop;
+                overlayBottomLine=tooltipTop+tooltipHeight;
                 //TODO
                 break;
             case 'left':
-                tooltipLeft=holeLeft-tooltipMargin-tooltipDimension.width;
+                tooltipLeft=holeLeft-tooltipMargin-tooltipWidth;
                 tooltipTop=holeTop;
                 //TODO
                 break;
@@ -121,8 +125,31 @@ export default class Overlay extends Component{
         }
         tooltipStyle.left=tooltipLeft+'px';
         tooltipStyle.top=tooltipTop+'px';
-        window.scrollTo(0,tooltipTop);
+
+        //scroll up or down
+        if(overlayTopLine<topLine||overlayBottomLine>bottomline){
+            window.scrollTo(0,overlayTopLine);
+        }
         tooltipStyle.opacity=1;
+    }
+    changePage(index){
+        this.setState({
+            index
+        })
+    }
+    close(){
+        this.setState({
+            index:-1
+        })
+    }
+    open(index){
+        let {steps}=this.props;
+        if(index>=0&&index<steps.length){
+            this.setState({
+                index
+            })
+        }
+
     }
     render(){
         let {steps,holePadding}=this.props,
@@ -130,19 +157,26 @@ export default class Overlay extends Component{
             currentStep=steps[index]||{};
         return(<div>
             {this.props.children}
-            <div className='eg-joyride-container'>
-                <div
-                    ref='hole'
-                    className='joyride-hole'>
-                    <span  onClick={::this.preStep}>上一步</span>
-                    <span onClick={::this.nextStep}>下一步</span>
+            {index==-1?null:(
+                <div className='eg-joyride-container'>
+                    <div ref='hole'
+                         className='joyride-hole'>
+                    </div>
+                    <div ref='tooltip' className='joyride-tooltip'>
+                        <div>{
+                            currentStep.title
+                        }</div>
+                        <div>
+                            <div className='btn-list'>
+                                <span  onClick={::this.close}>跳过</span>
+                                <span onClick={::this.nextStep}>下一步</span>
+                            </div>
+                            <Pager total={steps.length} current={index} changeCallback={::this.changePage}></Pager>
+                        </div>
+                    </div>
                 </div>
-                <div ref='tooltip' className='joyride-tooltip'>
-                    <div>{
-                        currentStep.title
-                    }</div>
-                </div>
-            </div>
+
+            )}
         </div>)
     }
 }
