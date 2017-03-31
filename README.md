@@ -1,7 +1,7 @@
 # eg-joyride
 
 页面引导组件，用于高亮某一块区域并添加说明步骤
-demo地址 [https://github.com/future-team/eg-joyride/example/index.html](https://github.com/future-team/eg-joyride/example/index.html)
+demo地址 [https://github.com/future-team/eg-joyride/examples/index.html](https://github.com/future-team/eg-joyride/examples/index.html)
 
 
 ```jsx
