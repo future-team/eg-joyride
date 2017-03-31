@@ -1,1 +1,1 @@
-export Joyride from './joyride.js';
+export Joyride from './joyride.js'

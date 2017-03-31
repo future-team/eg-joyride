@@ -1,63 +1,68 @@
 # eg-joyride
 
 页面引导组件，用于高亮某一块区域并添加说明步骤
+demo地址 [https://github.com/future-team/eg-joyride/example/index.html](https://github.com/future-team/eg-joyride/example/index.html)
+
+
 ```jsx
-     openSecond(){
-         this.refs.joyride.open(1)
-     }
-     render(){
-         return (
-             <Joyride
-                 ref='joyride'
-                 steps={[
-                     {
-                     title: 'step1 !',
-                     selector:'#step1',
-                     position:'bottom'
-                     },
-                     {
-                     title: 'step2 !',
-                     selector:'#step2',
-                     position:'top'
-                     },
-                     {
-                     title: 'step3 !',
-                     selector:'#step3',
-                     position:'left'
-                     },
-                     {
-                     title: 'step4 !',
-                     selector:'#step4',
-                     position:'right'
-                     }
-                 ]}>
-                 <div style={{paddingBottom:'500px'}}>
-                     <h1>hehehehehe</h1>
-                     <button onClick={::this.openSecond}>打开第二步</button>
-                     <div
-                         id='step1'
-                         style={{background:'red',width:'100px',height:'100px'}}>
-                         step1
+         openSecond(){
+             this.refs.joyride.open(1)
+         }
+         render(){
+             return (
+                 <div>
+                     <div style={{paddingBottom:'500px'}}>
+                         <h1>hehehehehe</h1>
+                         <button onClick={::this.openSecond}>打开第二步</button>
+                         <div
+                             id='step1'
+                             style={{background:'red',width:'100px',height:'100px'}}>
+                             step1
+                         </div>
+                         <div
+                             id='step2'
+                             style={{marginTop:'100px',background:'#ff6633',height:'200px'}}>
+                             step2
+                         </div>
+                         <div
+                             id='step3'
+                             style={{float:'right',width:'200px',height:'200px',background:'green'}}>
+                             step3
+                         </div>
+                         <div
+                             id='step4'
+                             style={{float:'left',width:'200px',height:'200px',background:'orange'}}>
+                             step4
+                         </div>
                      </div>
-                     <div
-                         id='step2'
-                         style={{marginTop:'100px',background:'#ff6633',height:'200px'}}>
-                         step2
-                     </div>
-                     <div
-                         id='step3'
-                         style={{float:'right',width:'200px',height:'200px',background:'green'}}>
-                         step3
-                     </div>
-                     <div
-                         id='step4'
-                         style={{float:'left',width:'200px',height:'200px',background:'orange'}}>
-                         step4
-                     </div>
+                     <Joyride
+                         ref='joyride'
+                         steps={[
+                         {
+                         title: 'Title only Hahahahahhah !',
+                         selector:'#step1',
+                         position:'bottom'
+                         },
+                         {
+                         title: 'Title only Hahahahahhah !',
+                         selector:'#step2',
+                         position:'top'
+                         },
+                         {
+                         title: 'Title only Hahahahahhah !',
+                         selector:'#step3',
+                         position:'left'
+                         },
+                         {
+                         title: 'Title only Hahahahahhah !',
+                         selector:'#step4',
+                         position:'right'
+                         }
+                     ]}>
+                     </Joyride>
                  </div>
-             </Joyride>
-         )
-     }
+             )
+         }
 ```
 #### `<Joyride>` Props:
 - steps  用于设置引导步骤，为数组，数组中每一项的结构： {title: 'step1 !',selector:'#step1', position:'bottom'}

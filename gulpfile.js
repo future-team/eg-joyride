@@ -48,6 +48,7 @@ gulp.task('webpack-module', function(done) {
 });
 gulp.task('webpack-example', function(done) {
     var wbpk = Object.create(webpackExample.build);
+    wbpk.externals=[];
     wbpk.output.path = path.join(process.cwd(), 'examples/dist');
     webpack(wbpk).run(function(err, stats) {
         if (err) throw new gutil.PluginError("webpack-example", err);

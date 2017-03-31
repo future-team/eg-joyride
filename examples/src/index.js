@@ -11,30 +11,7 @@ class Demo extends Component{
     }
     render(){
         return (
-            <Joyride
-                ref='joyride'
-                steps={[
-                    {
-                    title: 'Title only Hahahahahhah !',
-                    selector:'#step1',
-                    position:'bottom'
-                    },
-                    {
-                    title: 'Title only Hahahahahhah !',
-                    selector:'#step2',
-                    position:'top'
-                    },
-                    {
-                    title: 'Title only Hahahahahhah !',
-                    selector:'#step3',
-                    position:'left'
-                    },
-                    {
-                    title: 'Title only Hahahahahhah !',
-                    selector:'#step4',
-                    position:'right'
-                    }
-                ]}>
+            <div>
                 <div style={{paddingBottom:'500px'}}>
                     <h1>hehehehehe</h1>
                     <button onClick={::this.openSecond}>打开第二步</button>
@@ -59,7 +36,32 @@ class Demo extends Component{
                         step4
                     </div>
                 </div>
-            </Joyride>
+                <Joyride
+                    ref='joyride'
+                    steps={[
+                    {
+                    title: 'Title only Hahahahahhah !',
+                    selector:'#step1',
+                    position:'bottom'
+                    },
+                    {
+                    title: 'Title only Hahahahahhah !',
+                    selector:'#step2',
+                    position:'top'
+                    },
+                    {
+                    title: 'Title only Hahahahahhah !',
+                    selector:'#step3',
+                    position:'left'
+                    },
+                    {
+                    title: 'Title only Hahahahahhah !',
+                    selector:'#step4',
+                    position:'right'
+                    }
+                ]}>
+                </Joyride>
+            </div>
         )
     }
 }

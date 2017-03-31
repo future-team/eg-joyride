@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
+		module.exports = factory(require("react"));
 	else if(typeof define === 'function' && define.amd)
-		define([], factory);
+		define(["react"], factory);
 	else {
-		var a = factory();
+		var a = typeof exports === 'object' ? factory(require("react")) : factory(root["React"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function() {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_3__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -65,33 +65,378 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	exports.__esModule = true;
 	
-	__webpack_require__(2);
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var show = function show() {
-	    alert('demo test');
-	};
-	window.show = show;
-	exports['default'] = show;
-	module.exports = exports['default'];
+	var _joyrideJs = __webpack_require__(2);
+	
+	var _joyrideJs2 = _interopRequireDefault(_joyrideJs);
+	
+	exports.Joyride = _joyrideJs2['default'];
 
 /***/ },
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/**
+	 * Created by mac on 16/5/9.
+	 */
+	
+	'use strict';
+	
+	exports.__esModule = true;
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _react = __webpack_require__(3);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _pagerJs = __webpack_require__(4);
+	
+	var _pagerJs2 = _interopRequireDefault(_pagerJs);
+	
+	__webpack_require__(9);
+	
+	var Overlay = (function (_Component) {
+	    _inherits(Overlay, _Component);
+	
+	    _createClass(Overlay, null, [{
+	        key: 'propTypes',
+	        value: {
+	            //
+	            steps: _react.PropTypes.array,
+	            holePadding: _react.PropTypes.number,
+	            tooltipMargin: _react.PropTypes.number
+	        },
+	        enumerable: true
+	    }]);
+	
+	    function Overlay(props, context) {
+	        _classCallCheck(this, Overlay);
+	
+	        _Component.call(this, props, context);
+	        this.state = {
+	            index: 0
+	        };
+	    }
+	
+	    Overlay.prototype.resizeListener = function resizeListener() {
+	        if (this.state.index != -1) {
+	            this.renderOverlay();
+	        }
+	    };
+	
+	    Overlay.prototype.componentDidMount = function componentDidMount() {
+	        this.renderOverlay();
+	        window.addEventListener('resize', this.resizeListener.bind(this));
+	    };
+	
+	    Overlay.prototype.componentWillUnmount = function componentWillUnmount() {
+	        window.removeEventListener('resize', this.resizeListener.bind(this));
+	    };
+	
+	    Overlay.prototype.nextStep = function nextStep() {
+	        var steps = this.props.steps;
+	        var index = this.state.index;
+	
+	        index += 1;
+	        if (index >= steps.length) {
+	            this.close();
+	        } else {
+	            this.setState({
+	                index: index
+	            });
+	        }
+	    };
+	
+	    Overlay.prototype.componentDidUpdate = function componentDidUpdate() {
+	        this.renderOverlay();
+	    };
+	
+	    Overlay.prototype.getDimension = function getDimension(el) {
+	        var elemRect = el.getBoundingClientRect();
+	        return {
+	            top: elemRect.top + window.scrollY,
+	            left: elemRect.left + window.scrollX,
+	            width: el.clientWidth,
+	            height: el.clientHeight
+	        };
+	    };
+	
+	    Overlay.prototype.renderOverlay = function renderOverlay() {
+	        var _props = this.props;
+	        var steps = _props.steps;
+	        var holePadding = _props.holePadding;
+	        var tooltipMargin = _props.tooltipMargin;
+	        var index = this.state.index;
+	        var hole = this.refs.hole;
+	        var holeStyle = hole.style;
+	        var tooltip = this.refs.tooltip;
+	        var tooltipStyle = tooltip.style;
+	        var currentStep = steps[index];
+	        var stepDom = document.querySelectorAll(currentStep.selector)[0];
+	        var stepPosition = currentStep.position || 'bottom';
+	        tooltip.className = 'joyride-tooltip';
+	        tooltipStyle.opacity = 0;
+	        //hole
+	        var holeDimension = this.getDimension(stepDom),
+	            holeLeft = holeDimension.left - holePadding,
+	            holeTop = holeDimension.top - holePadding,
+	            holeWidth = holeDimension.width + 2 * holePadding,
+	            holeHeight = holeDimension.height + 2 * holePadding;
+	
+	        holeStyle.left = holeLeft + 'px';
+	        holeStyle.top = holeTop + 'px';
+	        holeStyle.width = holeWidth + 'px';
+	        holeStyle.height = holeHeight + 'px';
+	
+	        //tooltip 不考虑冲突，只考虑用户设置的position
+	        var tooltipDimension = this.getDimension(tooltip),
+	            tooltipTop = 0,
+	            tooltipLeft = 0,
+	            tooltipWidth = tooltipDimension.width,
+	            tooltipHeight = tooltipDimension.height;
+	
+	        //可视窗口的上下边界
+	        var topLine = window.scrollY,
+	            bottomline = topLine + window.innerHeight,
+	            overlayTopLine = holeTop,
+	            overlayBottomLine = holeTop + (tooltipHeight > holeHeight ? tooltipHeight : holeHeight);
+	
+	        switch (stepPosition) {
+	            case 'top':
+	                tooltipTop = holeTop - tooltipMargin - tooltipHeight;
+	                tooltipLeft = holeLeft;
+	                overlayTopLine = tooltipTop;
+	                overlayBottomLine = holeTop + holeHeight;
+	                //TODO
+	                break;
+	            case 'bottom':
+	                tooltipTop = holeTop + holeHeight + tooltipMargin;
+	                tooltipLeft = holeLeft;
+	                overlayTopLine = holeTop;
+	                overlayBottomLine = tooltipTop + tooltipHeight;
+	                //TODO
+	                break;
+	            case 'left':
+	                tooltipLeft = holeLeft - tooltipMargin - tooltipWidth;
+	                tooltipTop = holeTop;
+	                //TODO
+	                break;
+	            case 'right':
+	                tooltipLeft = holeLeft + holeWidth + tooltipMargin;
+	                tooltipTop = holeTop;
+	                //TODO
+	                break;
+	        }
+	        tooltipStyle.left = tooltipLeft + 'px';
+	        tooltipStyle.top = tooltipTop + 'px';
+	
+	        //scroll up or down
+	        if (overlayTopLine < topLine || overlayBottomLine > bottomline) {
+	            window.scrollTo(0, overlayTopLine);
+	        }
+	        tooltip.className = 'joyride-tooltip animate';
+	        requestAnimationFrame(function () {
+	            tooltipStyle.opacity = 1;
+	        });
+	    };
+	
+	    Overlay.prototype.changePage = function changePage(index) {
+	        this.setState({
+	            index: index
+	        });
+	    };
+	
+	    Overlay.prototype.close = function close() {
+	        this.setState({
+	            index: -1
+	        });
+	    };
+	
+	    Overlay.prototype.open = function open(index) {
+	        var steps = this.props.steps;
+	
+	        if (index >= 0 && index < steps.length) {
+	            this.setState({
+	                index: index
+	            });
+	        }
+	    };
+	
+	    Overlay.prototype.render = function render() {
+	        var steps = this.props.steps;
+	        var index = this.state.index;
+	        var currentStep = steps[index] || {};
+	        if (index == -1) {
+	            return null;
+	        } else {
+	            return _react2['default'].createElement(
+	                'div',
+	                { className: 'eg-joyride-container' },
+	                _react2['default'].createElement('div', { ref: 'hole',
+	                    className: 'joyride-hole' }),
+	                _react2['default'].createElement(
+	                    'div',
+	                    { ref: 'tooltip', className: 'joyride-tooltip' },
+	                    _react2['default'].createElement(
+	                        'div',
+	                        null,
+	                        currentStep.title
+	                    ),
+	                    _react2['default'].createElement(
+	                        'div',
+	                        null,
+	                        _react2['default'].createElement(
+	                            'div',
+	                            { className: 'btn-list' },
+	                            _react2['default'].createElement(
+	                                'span',
+	                                { onClick: this.close.bind(this) },
+	                                '跳过'
+	                            ),
+	                            _react2['default'].createElement(
+	                                'span',
+	                                { onClick: this.nextStep.bind(this) },
+	                                index == steps.length - 1 ? '关闭' : '下一步'
+	                            )
+	                        ),
+	                        _react2['default'].createElement(_pagerJs2['default'], { total: steps.length, current: index, changeCallback: this.changePage.bind(this) })
+	                    )
+	                )
+	            );
+	        }
+	    };
+	
+	    _createClass(Overlay, null, [{
+	        key: 'defaultProps',
+	        value: {
+	            holePadding: 5,
+	            tooltipMargin: 10
+	        },
+	        enumerable: true
+	    }]);
+	
+	    return Overlay;
+	})(_react.Component);
+	
+	exports['default'] = Overlay;
+	module.exports = exports['default'];
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	exports.__esModule = true;
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _react = __webpack_require__(3);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	__webpack_require__(5);
+	
+	var Pager = (function (_Component) {
+	    _inherits(Pager, _Component);
+	
+	    _createClass(Pager, null, [{
+	        key: 'propTypes',
+	        value: {
+	            //
+	            total: _react.PropTypes.number,
+	            current: _react.PropTypes.number,
+	            changeCallback: _react.PropTypes.func
+	
+	        },
+	        enumerable: true
+	    }, {
+	        key: 'defaultProps',
+	        value: {
+	            total: 0,
+	            current: 0,
+	            changeCallback: function changeCallback() {}
+	        },
+	        enumerable: true
+	    }]);
+	
+	    function Pager(props, context) {
+	        _classCallCheck(this, Pager);
+	
+	        _Component.call(this, props, context);
+	    }
+	
+	    Pager.prototype.render = function render() {
+	        var _props = this.props;
+	        var total = _props.total;
+	        var current = _props.current;
+	        var _this = this;
+	        var pageList = [];
+	
+	        var _loop = function (index) {
+	            pageList.push(_react2['default'].createElement('i', { onClick: function () {
+	                    if (index == current) {
+	                        return;
+	                    }
+	                    _this.props.changeCallback(index);
+	                },
+	                className: index == current ? 'active' : '' }));
+	        };
+	
+	        for (var index = 0; index < total; index++) {
+	            _loop(index);
+	        }
+	        return _react2['default'].createElement(
+	            'div',
+	            { className: 'eg-pager-container' },
+	            pageList
+	        );
+	    };
+	
+	    return Pager;
+	})(_react.Component);
+	
+	exports['default'] = Pager;
+	module.exports = exports['default'];
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(3);
+	var content = __webpack_require__(6);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(5)(content, {});
+	var update = __webpack_require__(8)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../node_modules/css-loader/index.js!../node_modules/less-loader/index.js!./index.less", function() {
-				var newContent = require("!!../node_modules/css-loader/index.js!../node_modules/less-loader/index.js!./index.less");
+			module.hot.accept("!!../node_modules/css-loader/index.js!../node_modules/less-loader/index.js!./pager.less", function() {
+				var newContent = require("!!../node_modules/css-loader/index.js!../node_modules/less-loader/index.js!./pager.less");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -101,21 +446,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 3 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(4)();
+	exports = module.exports = __webpack_require__(7)();
 	// imports
 	
 	
 	// module
-	exports.push([module.id, "body {\n  font-style: 12px;\n}\n", ""]);
+	exports.push([module.id, ".eg-pager-container {\n  text-align: center;\n}\n.eg-pager-container i {\n  display: inline-block;\n  box-sizing: border-box;\n  width: 6px;\n  height: 6px;\n  border-radius: 50%;\n  border: 1px solid #aaa;\n  margin-right: 5px;\n  cursor: pointer;\n}\n.eg-pager-container i:last-child {\n  margin-right: 0;\n}\n.eg-pager-container i.active {\n  background: #333;\n  border-color: #333;\n}\n", ""]);
 	
 	// exports
 
 
 /***/ },
-/* 4 */
+/* 7 */
 /***/ function(module, exports) {
 
 	/*
@@ -171,7 +516,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 5 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -393,6 +738,46 @@ return /******/ (function(modules) { // webpackBootstrap
 		if(oldSrc)
 			URL.revokeObjectURL(oldSrc);
 	}
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(10);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(8)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!../node_modules/css-loader/index.js!../node_modules/less-loader/index.js!./index.less", function() {
+				var newContent = require("!!../node_modules/css-loader/index.js!../node_modules/less-loader/index.js!./index.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(7)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, ".eg-joyride-container {\n  bottom: 0;\n  left: 0;\n  position: absolute;\n  right: 0;\n  top: 0;\n  z-index: 1500;\n}\n.eg-joyride-container .joyride-hole {\n  border-radius: 4px;\n  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 0, 0, 0.5);\n  position: absolute;\n  width: 100px;\n  height: 100px;\n}\n.eg-joyride-container .animate {\n  transition-duration: 1s;\n  transition-property: opacity;\n}\n.eg-joyride-container .joyride-tooltip {\n  background-color: #fff;\n  border-radius: 4px;\n  color: #555;\n  cursor: default;\n  padding: 20px 20px 5px 20px;\n  pointer-events: auto;\n  -webkit-transform: translateZ(0);\n  transform: translateZ(0);\n  width: 290px;\n  position: absolute;\n  opacity: 0;\n  top: 0;\n  left: 0;\n  z-index: 1510;\n}\n.eg-joyride-container .joyride-tooltip .btn-list {\n  font-size: 13px;\n  margin: 20px 0 5px 0;\n}\n.eg-joyride-container .joyride-tooltip .btn-list > span {\n  display: inline-block;\n  padding: 5px 15px;\n  border: 1px solid #ddd;\n  border-radius: 2px;\n}\n.eg-joyride-container .joyride-tooltip .btn-list > span:last-child {\n  float: right;\n}\n", ""]);
+	
+	// exports
 
 
 /***/ }
